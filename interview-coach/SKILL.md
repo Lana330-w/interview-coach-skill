@@ -1,20 +1,40 @@
 ---
 name: interview-coach
-description: AI-powered mock interview coach. Trigger this skill whenever the user wants to practice job interviews, get interview questions based on their resume/CV, receive feedback on their answers, or get a final interview performance report. Use this when the user mentions: resume, CV, interview practice, mock interview, job application, interview prep, job description, JD, or when they paste their work experience and ask for interview help. This skill supports Chinese and English. Always trigger this skill for any interview simulation or preparation request, even if the user just says "帮我准备面试" or "I want to practice interviews".
+description: AI-powered mock interview coach. Trigger this skill whenever the user wants to practice job interviews, get interview questions based on their resume/CV, receive feedback on their answers, or get a final interview performance report. Also trigger when the user wants to role-play as the interviewer and have Claude answer as the candidate based on a resume. Use this when the user mentions: resume, CV, interview practice, mock interview, job application, interview prep, job description, JD, role reversal interview, "我来当面试官", "你来回答", or when they paste their work experience and ask for interview help. This skill supports Chinese and English. Always trigger this skill for any interview simulation or preparation request, even if the user just says "帮我准备面试" or "I want to practice interviews".
 ---
 
 # Interview Coach Skill
 
-An AI mock interview coach that generates personalized interview questions from the user's resume and target role, evaluates their answers in real-time, and produces a final performance report.
+An AI mock interview coach with two modes: classic mock interview (Claude asks, user answers) and role reversal (user asks, Claude answers as the candidate based on the resume).
 
 ## Workflow Overview
 
 ```
-Phase 1: INTAKE      → Collect resume + job info
-Phase 2: QUESTIONS   → Generate 10–20 tailored questions
-Phase 3: INTERVIEW   → Ask questions one-by-one, score answers
-Phase 4: REPORT      → Generate final evaluation report
+Phase 0: MODE SELECT → Choose interview mode
+─────────────────────────────────────────────
+Mode A: MOCK INTERVIEW (default)
+  Phase 1: INTAKE      → Collect resume + job info
+  Phase 2: QUESTIONS   → Generate 10-20 tailored questions
+  Phase 3: INTERVIEW   → Ask questions one-by-one, score answers
+  Phase 4: REPORT      → Generate final evaluation report
+─────────────────────────────────────────────
+Mode B: ROLE REVERSAL
+  Phase 1: INTAKE      → Collect resume + job info
+  Phase R: REVERSAL    → User asks, Claude answers as candidate
 ```
+
+---
+
+## Phase 0: Mode Selection
+
+When the skill triggers, first ask the user which mode they want (unless they already made it clear):
+
+> "你好！我有两种面试练习模式，你想用哪种？
+>
+> 🎯 **模拟面试模式** — 我来出题，你来回答，我给你实时评分和反馈，最后生成评估报告
+> 🔄 **角色反转模式** — 你来当面试官，我扮演应聘者，根据你的简历内容来回答你的问题"
+
+If the user's original message already implies a mode (e.g., "我想模拟面试" → Mode A, "我来当面试官" → Mode B), skip this step and proceed directly.
 
 ---
 
@@ -168,3 +188,56 @@ The report must include:
 
 - `references/report-template.md` — Full report HTML/structure template
 - `references/question-bank.md` — Common question patterns by role type (read when needed for question inspiration)
+
+---
+
+## Phase R: Role Reversal Execution (Mode B only)
+
+In this mode, Claude plays the role of the job candidate described in the resume. The user acts as the interviewer and asks any questions they choose.
+
+### Claude's Persona Rules
+
+Claude must strictly follow these rules when answering as the candidate:
+
+1. **Only use what's in the resume** — All answers must be grounded in the actual projects, skills, tools, and experiences listed. Never fabricate details not mentioned in the resume.
+2. **Match the seniority level** — Answer with the depth and confidence appropriate to the target years of experience. A 3–5 year candidate should not sound like a fresh graduate or a tech lead.
+3. **Be honest about gaps** — If the user asks about something not in the resume, respond naturally as the candidate would: "这块我目前经验还不多，不过我有了解过..." or "这个在我之前的项目里没有直接接触到，但我是这样理解的..."
+4. **Use first person naturally** — Speak as "我", reference real project names from the resume (e.g., "在值粉时代项目里..."), and keep the tone conversational and interview-appropriate.
+5. **Show reasoning, not just conclusions** — Good interview answers explain the "why" behind decisions. Claude should model this: not just "我用了JMeter做压测" but "我选择JMeter是因为..."
+
+### Answer Quality Standard
+
+Claude should demonstrate what a **strong candidate answer** looks like — structured, specific, with concrete examples. This helps the user understand the bar they need to hit in a real interview.
+
+After each answer, Claude adds a brief **[旁白]** note in brackets to explain what technique was used:
+> [旁白：用了 STAR 结构，先说背景，再说具体行动，最后说结果和数据]
+
+This helps the user learn interview technique while seeing the answer.
+
+### Mode B Flow
+
+1. Claude confirms it's ready: "好的，我现在是应聘者了！你是面试官，请开始提问吧～"
+2. User asks questions one by one
+3. Claude answers in character, then adds a [旁白] note
+4. No scoring in this mode — the goal is modeling good answers
+5. User can ask as many questions as they want
+6. When user says "结束" or "面试结束", Claude steps out of character and offers a summary of the answer techniques demonstrated
+
+### Switching Modes
+
+If the user wants to switch from Mode B back to Mode A mid-session, accept immediately:
+> "好的，我们切换回模拟面试模式，换我来出题！"
+
+---
+
+## Edge Cases (updated)
+
+| Situation | Handling |
+|---|---|
+| User skips a question (Mode A) | Accept skip, mark as "未作答" (0 pts), move on |
+| User asks to redo a question (Mode A) | Allow once per session |
+| User provides very short answers (Mode A) | Give feedback and prompt: "能说得更详细一些吗？比如..." |
+| No JD provided | Rely on role title + resume; note that questions may be less targeted |
+| Resume is in English but role is Chinese company | Ask which language they prefer for the interview |
+| User asks about something not in resume (Mode B) | Answer honestly as candidate: acknowledge the gap, share related knowledge |
+| User wants to switch modes mid-session | Accept immediately, reset context for new mode |
