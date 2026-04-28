@@ -1,59 +1,90 @@
 # 🎯 Interview Coach — Claude Skill
 
-A Claude skill that turns your resume into a personalized mock interview experience, with real-time answer feedback and a final performance report.
+基于你的简历和目标岗位，生成个性化面试题，实时评分反馈，最终输出完整面试评估报告的 Claude Skill。
 
-## Features
+---
 
-- 📄 **Resume parsing** — Upload a PDF/DOCX or paste your resume text
-- 🎯 **Tailored questions** — 10–20 questions based on your actual experience + target JD
-- 💬 **Real-time feedback** — Score and coaching after every answer
-- 📊 **Final report** — Radar chart, score breakdown, strengths/gaps, and readiness verdict
-- 🌐 **Bilingual** — Supports Chinese and English
+## ✨ 功能特色
 
-## How to Install
+- 📄 **简历解析** — 支持上传 PDF/DOCX 文件或直接粘贴简历文本
+- 🎯 **个性化出题** — 根据你的真实经历 + 目标 JD 生成 10–20 道面试题
+- 💬 **实时反馈** — 每道题回答后即时评分，指出亮点和不足
+- 📊 **最终报告** — 雷达图、逐题得分、优势/待提升方向、面试准备度评级
+- 🔄 **角色反转模式** — 你来当面试官，Claude 扮演应聘者，示范高质量回答
+- 🌐 **中英双语** — 支持中文和英文面试场景
 
-1. Download `interview-coach.skill`
-2. In Claude.ai, go to **Settings → Skills**
-3. Upload the `.skill` file
+---
 
-## How to Use
+## 🚀 两种练习模式
 
-Just tell Claude:
-> "帮我模拟面试，我要面 [岗位名称]" 
+### 🎯 模拟面试模式（默认）
+Claude 担任面试官，逐题提问，对你的每个回答进行评分和点评，最终生成完整评估报告。适合正式上阵前的自我检验。
 
-Or in English:
-> "I want to practice interviewing for a Senior Frontend Engineer role"
+### 🔄 角色反转模式
+你担任面试官，Claude 扮演简历里的应聘者来回答你的问题。Claude 只使用简历中真实存在的项目和经历作答，并在每道回答后附上 **[旁白]** 说明用了什么回答技巧（如 STAR 结构），帮助你学习如何把经历表达得更好。
 
-Then upload your resume or paste your resume text. Claude will guide you through the rest.
+---
 
-## What You'll Need
+## 📦 安装方式
 
-- Your resume (PDF, DOCX, or text)
-- Target job title and seniority level
-- Job description (optional but recommended for more targeted questions)
+1. 前往 [Releases](../../releases) 页面下载 `interview-coach.skill` 文件
+2. 打开 [Claude.ai](https://claude.ai)，进入 **设置 → Skills**
+3. 上传 `.skill` 文件即可
 
-## Skill Structure
+---
+
+## 💬 使用方式
+
+安装后，直接告诉 Claude：
+
+> "我想模拟面试"
+
+或者开启角色反转模式：
+
+> "我来当面试官，你来回答"
+
+然后提供你的简历内容（上传文件或粘贴文本），Claude 会引导你完成剩余步骤。
+
+---
+
+## 📋 需要准备的信息
+
+| 信息 | 是否必填 | 说明 |
+|---|---|---|
+| 简历 | ✅ 必填 | PDF、DOCX 文件或纯文本均可 |
+| 目标岗位名称 | ✅ 必填 | 如"软件测试工程师"、"前端开发" |
+| 目标经验年限 | ✅ 必填 | 如"3–5年"、"高级" |
+| 岗位 JD | 🔶 强烈建议 | 有 JD 题目会更贴近该公司真实面试 |
+
+---
+
+## 📊 面试报告示例
+
+完成模拟面试后，你将收到一份包含以下内容的评估报告：
+
+- 综合得分（满分 100 分）
+- 六维能力雷达图（技术能力、问题解决、沟通表达、团队协作、自我驱动、岗位匹配度）
+- 逐题得分明细表
+- 核心优势（3 条）与待提升方向（3 条）
+- 个性化学习建议
+- 面试准备度评级：🔴 暂不建议投递 / 🟡 还需加强 / 🟢 可以投递 / ⭐ 表现出色
+
+---
+
+## 📁 文件结构
 
 ```
 interview-coach/
-├── SKILL.md                        # Main skill instructions
-├── LICENSE.txt
-├── README.md
+├── SKILL.md                      # Skill 主指令文件
+├── README.md                     # 说明文档
+├── LICENSE.txt                   # MIT 开源协议
 └── references/
-    ├── report-template.md          # Report scoring rubric + HTML template
-    └── question-bank.md            # Question patterns by role type
+    ├── report-template.md        # 评分规则 + 报告模板
+    └── question-bank.md          # 各岗位类型题目参考库
 ```
 
-## Example Output
+---
 
-After completing a mock interview, you'll receive a report with:
-- Overall score (e.g., 78/100)
-- Radar chart across 6 competency areas
-- Per-question score table
-- Top 3 strengths and improvement areas
-- Personalized study recommendations
-- Interview readiness verdict (🔴 / 🟡 / 🟢 / ⭐)
+## 📄 开源协议
 
-## License
-
-MIT
+MIT License — 欢迎自由使用、修改和分享。
